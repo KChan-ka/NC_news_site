@@ -1,5 +1,4 @@
 const db = require("../connection")
-const data = require('../data/test-data/index');
 const format = require("pg-format");
 const {
   convertTimestampToDate,
@@ -102,7 +101,7 @@ async function insertTableTopic(topicData) {
   //perform insert into
   await db.query(insertIntoString)
     .then(({ rows }) => {
-      console.log(rows, " <<< has been inserted to topics table")
+      // console.log(rows, " <<< has been inserted to topics table")
     })
 }
 
@@ -123,7 +122,7 @@ async function insertTableUsers(userData) {
   //perform insert into
   await db.query(insertIntoString)
     .then(({ rows }) => {
-      console.log(rows, " <<< has been inserted to users table")
+      // console.log(rows, " <<< has been inserted to users table")
     })
 }
 
@@ -148,7 +147,7 @@ async function insertTableArticles(articlesData) {
 
   //perform insert into
   const output = await db.query(insertIntoString)
-  console.log(output.rows, " <<< has been inserted to articles table")
+  // console.log(output.rows, " <<< has been inserted to articles table")
   return output.rows
 }
 
@@ -177,7 +176,7 @@ async function insertTableComments(commentData, rowsInsertedIntoArticles) {
   //perform insert into
   await db.query(insertIntoString)
     .then(({ rows }) => {
-      console.log(rows, " <<< has been inserted to comments table")
+      // console.log(rows, " <<< has been inserted to comments table")
     })
 }
 

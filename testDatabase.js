@@ -4,6 +4,7 @@ const data = require('./db/data/development-data/index');
 
 
 async function testSelects() {
+    //create tables and seed the data
     await seed(data)
     console.log("Database seed process has been completed")
 
@@ -14,13 +15,13 @@ async function testSelects() {
         })
 
     //Get all of the articles where the topic is coding
-    await db.query(`SELECT * FROM articles WHERE topic = 'coding';`)
+    await db.query(`SELECT title, topic FROM articles WHERE topic = 'coding';`)
         .then(({ rows }) => {
             console.log(rows, "<< Get all of the articles where the topic is coding")
         })
 
     //Get all of the comments where the votes are less than zero
-    await db.query(`SELECT * FROM comments WHERE votes < 0;`)
+    await db.query(`SELECT body,votes FROM comments WHERE votes < 0;`)
         .then(({ rows }) => {
             console.log(rows, "<< Get all of the comments where the votes are less than zero")
         })
@@ -32,7 +33,7 @@ async function testSelects() {
         })
 
     //Get all of the articles by user grumpy19
-    await db.query(`SELECT * FROM articles WHERE author = 'grumpy19';`)
+    await db.query(`SELECT title, author, topic FROM articles WHERE author = 'grumpy19';`)
         .then(({ rows }) => {
             console.log(rows, "<< Get all of the articles by user grumpy19")
         })
@@ -45,6 +46,7 @@ async function testSelects() {
 }
 
 //test the selects in dev database
+
 testSelects().then(() => db.end());
 
 
