@@ -6,7 +6,7 @@ beforeAll(() => seed(data));
 afterAll(() => db.end());
 
 describe('seed', () => {
-  describe('topics table', () => {
+  describe.only('topics table', () => {
     test('topics table exists', () => {
       return db
         .query(
@@ -77,7 +77,7 @@ describe('seed', () => {
         });
     });
   });
-  describe('users table', () => {
+  describe.only('users table', () => {
     test('users table exists', () => {
       return db
         .query(
@@ -147,7 +147,7 @@ describe('seed', () => {
     });
   });
 
-  describe('articles table', () => {
+  describe.only('articles table', () => {
     test('articles table exists', () => {
       return db
         .query(
@@ -286,7 +286,7 @@ describe('seed', () => {
     });
   });
 
-  describe('comments table', () => {
+  describe.only('comments table', () => {
     test('comments table exists', () => {
       return db
         .query(
@@ -399,7 +399,7 @@ describe('seed', () => {
   });
 
   describe('data insertion', () => {
-    test('topics data has been inserted correctly', () => {
+    test.only('topics data has been inserted correctly', () => {
       return db.query(`SELECT * FROM topics;`).then(({ rows: topics }) => {
         expect(topics).toHaveLength(3);
         topics.forEach((topic) => {
@@ -409,7 +409,7 @@ describe('seed', () => {
         });
       });
     });
-    test('users data has been inserted correctly', () => {
+    test.only('users data has been inserted correctly', () => {
       return db.query(`SELECT * FROM users;`).then(({ rows: users }) => {
         expect(users).toHaveLength(4);
         users.forEach((user) => {
@@ -419,7 +419,7 @@ describe('seed', () => {
         });
       });
     });
-    test('articles data has been inserted correctly', () => {
+    test.only('articles data has been inserted correctly', () => {
       return db.query(`SELECT * FROM articles;`).then(({ rows: articles }) => {
         expect(articles).toHaveLength(13);
         articles.forEach((article) => {
@@ -434,7 +434,7 @@ describe('seed', () => {
         });
       });
     });
-    test('comments data has been inserted correctly', () => {
+    test.only('comments data has been inserted correctly', () => {
       return db.query(`SELECT * FROM comments;`).then(({ rows: comments }) => {
         expect(comments).toHaveLength(18);
         comments.forEach((comment) => {
