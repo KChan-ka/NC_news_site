@@ -47,7 +47,7 @@ describe("createReferenceObj", () => {
   test("check for mutation", () => {
     const inputArray = [{ name: "Rose", id: "dS8rJns", secretFear: "spiders" }]
     const controlArray = [{ name: "Rose", id: "dS8rJns", secretFear: "spiders" }]
-    const actual = createReferenceObj(inputArray, "name", "id")
+    createReferenceObj(inputArray, "name", "id")
     expect(inputArray).toEqual(controlArray)
   })
   test("returns ref object with key value pair matching the keys passed in when passed in arr with one obj and two keys", () => {

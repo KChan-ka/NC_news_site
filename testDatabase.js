@@ -1,11 +1,13 @@
 const db = require('./db/connection');
 const seed = require('./db/seeds/seed');
-const data = require('./db/data/development-data/index');
+const devData = require('./db/data/development-data/index');
+const testData = require('./db/data/test-data/index');
 
 
 async function testSelects() {
-    //create tables and seed the data
-    await seed(data)
+    //create tables and seed the data, select devData or testData
+    // await seed(testData)
+    await seed(devData) 
     console.log("Database seed process has been completed")
 
     //get all of the users
