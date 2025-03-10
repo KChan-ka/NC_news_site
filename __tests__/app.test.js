@@ -147,7 +147,7 @@ describe("/api/articles/:article_id/comments", () => {
           expect(typeof comment.created_at).toBe("string")
           expect(typeof comment.author).toBe("string")
           expect(typeof comment.body).toBe("string")
-          expect(typeof comment.article_id).toBe("number")
+          expect(comment.article_id).toBe(3)
         })
 
         //check it is sorted by date in desc order
@@ -172,6 +172,57 @@ describe("/api/articles/:article_id/comments", () => {
       .then(({ body }) => {
         const msg = body.msg
         expect(msg).toBe("bad request, incorrect datatype was used")
+      })
+  })
+})
+
+describe("POST: /api/articles/:article_id/comments", () => {
+  test("201: save one comment to article id", () => {
+    return request(app)
+      .post('/api/articles/1/comments')
+      .send({
+        author: "icellusedkars",
+        body: "test body"
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const comment = body.comment
+        expect(comment.comment_id).toBe(19)
+        expect(comment.article_id).toBe(1)
+        expect(comment.body).toBe("test body")
+        expect(comment.votes).toBe(0)
+        expect(comment.author).toBe("icellusedkars")
+
+      })
+  })
+
+  test("400: error message is returned when author does not exist", () => {
+    return request(app)
+      .post('/api/articles/1/comments')
+      .send({
+        author: "test user",
+        body: "test body"
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const msg = body.msg
+        expect(msg).toBe(`insert or update on table "comments" violates foreign key constraint`)
+
+      })
+  })
+
+  test("404: error message is returned when article id does not exist", () => {
+    return request(app)
+      .post('/api/articles/125/comments')
+      .send({
+        author: "icellusedkars",
+        body: "test body"
+      })
+      .expect(404)
+      .then(({ body }) => {
+        const msg = body.msg
+        expect(msg).toBe("no article id found")
+
       })
   })
 })

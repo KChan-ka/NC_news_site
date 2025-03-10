@@ -2,7 +2,8 @@ const {
     selectTopics,
     selectArticleById,
     selectArticles,
-    selectCommentsByArticleId
+    selectCommentsByArticleId,
+    insertCommentByArticleId,
 } = require('../model/model')
 
 const endpointsJson = require("../endpoints.json");
@@ -55,6 +56,20 @@ exports.fetchCommentsByArticleId = (req, res, next) => {
             res.status(200).send({ comments : rows })
         })
         .catch((err) => {
+            next(err);
+        })
+}
+
+//post a new comment
+exports.postCommentByArticleId = (req, res, next) => {
+    const { article_id } = req.params
+    const { author, body } = req.body
+    insertCommentByArticleId(article_id, author, body)
+        .then((rows) => {
+            res.status(201).send({ comment: rows })
+        })
+        .catch((err) => {
+            console.log(err, "<<< err controller")
             next(err);
         })
 }

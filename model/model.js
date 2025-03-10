@@ -1,4 +1,7 @@
 const db = require("../db/connection");
+const {
+    checkIfArticleIdExist,
+} = require("./model.articles")
 const format = require("pg-format");
 
 exports.selectTopics = () => {
@@ -79,4 +82,26 @@ exports.selectCommentsByArticleId = (articleId) => {
         });
 };
 
+
+exports.insertCommentByArticleId = async (articleId, author, body) => {
+
+    //check if article id exist
+    const articleIdExists = await checkIfArticleIdExist(articleId)
+    if (!articleIdExists) {
+        return Promise.reject({ status: 404, msg: "no article id found" });
+    }
+    console.log("reaching", articleId, author, body)
+    const queryString = `
+    INSERT INTO comments
+        (article_id, author, body)
+    VALUES
+        ($1, $2, $3)
+    RETURNING *`
+
+    return db
+        .query(queryString, [articleId, author, body])
+        .then(({ rows }) => {
+            return rows[0];
+        });
+};
 
