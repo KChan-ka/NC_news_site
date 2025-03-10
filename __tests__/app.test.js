@@ -5,7 +5,7 @@ const seed = require("../db/seeds/seed")
 const data = require("../db/data/test-data")
 const app = require('../app.js');
 const request = require('supertest');
-// const jestSorted = require('jest-sorted')
+const jestSorted = require('jest-sorted')
 
 
 
@@ -47,10 +47,15 @@ describe("/api/topics", () => {
       .expect(200)
       .then(({ body }) => {
         const topics = body.topics
-        topics.forEach((topic) => {
-          expect(typeof topic.slug).toBe("string")
-          expect(typeof topic.description).toBe("string")
-        })
+        //ensure that this returns the correct number of rows
+        expect(topics.length).toBe(3)
+
+        if (topics.length > 0) {
+          topics.forEach((topic) => {
+            expect(typeof topic.slug).toBe("string")
+            expect(typeof topic.description).toBe("string")
+          })
+        }
       })
   })
 })
@@ -98,3 +103,31 @@ describe("/api/articles/:article_id", () => {
   })
 })
 
+describe("/api/articles", () => {
+  test("200: retrieves all articles from articles table sorted by date in descending order", () => {
+    return request(app)
+      .get('/api/articles')
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles
+        //5 articles present in test db
+        expect(articles.length).toBe(5)
+
+        if (articles.length > 0) {
+          articles.forEach((article) => {
+            expect(typeof article.author).toBe("string")
+            expect(typeof article.title).toBe("string")
+            expect(typeof article.article_id).toBe("number")
+            expect(typeof article.topic).toBe("string")
+            expect(typeof article.created_at).toBe("string")
+            expect(typeof article.votes).toBe("number")
+            expect(typeof article.article_img_url).toBe("string")
+            expect(typeof article.comment_count).toBe("string")
+          })
+        }
+
+        //check it is sorted by date in desc order
+        expect(articles).toBeSortedBy('created_at', {descending: true,})
+      })
+  })
+})

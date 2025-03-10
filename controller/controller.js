@@ -1,13 +1,13 @@
 const {
     selectTopics,
-    selectArticleById
+    selectArticleById,
+    selectArticles
 } = require('../model/model')
 
 const endpointsJson = require("../endpoints.json");
 
 //fetch all APIs
 exports.fetchAllAPi = (req, res, next) => {
-    console.log(endpointsJson, "<<<<endpointsJson")
     res.status(200).send({endpoints : endpointsJson})
 }
 
@@ -31,6 +31,18 @@ exports.fetchArticleById = (req, res, next) => {
             res.status(200).send({ article: rows })
         })
         .catch((err) => {
+            next(err);
+        })
+}
+
+//fetch all articles
+exports.fetchArticles = (req, res, next) => {
+    selectArticles()
+        .then((rows) => {
+            res.status(200).send({ articles : rows })
+        })
+        .catch((err) => {
+            console.log(err, "<< controller error")
             next(err);
         })
 }
