@@ -2,14 +2,15 @@ const {
     selectTopics,
     selectArticleById,
     selectArticles,
-    selectCommentsByArticleId
+    selectCommentsByArticleId,
+    insertCommentByArticleId,
 } = require('../model/model')
 
 const endpointsJson = require("../endpoints.json");
 
 //fetch all APIs
 exports.fetchAllAPi = (req, res, next) => {
-    res.status(200).send({endpoints : endpointsJson})
+    res.status(200).send({ endpoints: endpointsJson })
 }
 
 
@@ -40,7 +41,7 @@ exports.fetchArticleById = (req, res, next) => {
 exports.fetchArticles = (req, res, next) => {
     selectArticles()
         .then((rows) => {
-            res.status(200).send({ articles : rows })
+            res.status(200).send({ articles: rows })
         })
         .catch((err) => {
             next(err);
@@ -49,10 +50,23 @@ exports.fetchArticles = (req, res, next) => {
 
 //fetch comments from article id
 exports.fetchCommentsByArticleId = (req, res, next) => {
-    const {article_id} = req.params
+    const { article_id } = req.params
     selectCommentsByArticleId(article_id)
         .then((rows) => {
-            res.status(200).send({ comments : rows })
+            res.status(200).send({ comments: rows })
+        })
+        .catch((err) => {
+            next(err);
+        })
+}
+
+//post a new comment
+exports.postCommentByArticleId = (req, res, next) => {
+    const { article_id } = req.params
+    const { author, body } = req.body
+    insertCommentByArticleId(article_id, author, body)
+        .then((rows) => {
+            res.status(201).send({ comment: rows })
         })
         .catch((err) => {
             next(err);

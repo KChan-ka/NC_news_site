@@ -8,7 +8,6 @@ const request = require('supertest');
 const jestSorted = require('jest-sorted')
 
 
-
 beforeEach(() => {
   return seed(data);
 })
@@ -138,7 +137,7 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         const comments = body.comments
-        //5 articles present in test db
+        //2 articles present in test db
         expect(comments.length).toBe(2)
 
         comments.forEach((comment) => {
@@ -161,7 +160,7 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(404)
       .then(({ body }) => {
         const msg = body.msg
-        expect(msg).toBe("no data found")
+        expect(msg).toBe("no article id found")
       })
   })
 
@@ -172,6 +171,68 @@ describe("/api/articles/:article_id/comments", () => {
       .then(({ body }) => {
         const msg = body.msg
         expect(msg).toBe("bad request, incorrect datatype was used")
+      })
+  })
+
+  test("404: no comments are returned if valid article id is found", () => {
+    return request(app)
+      .get('/api/articles/13/comments')
+      .expect(404)
+      .then(({ body }) => {
+        const msg = body.msg
+        expect(msg).toBe("no comments found")
+      })
+  })
+
+})
+
+describe("POST: /api/articles/:article_id/comments", () => {
+  test("201: save one comment to article id", () => {
+    return request(app)
+      .post('/api/articles/1/comments')
+      .send ({
+        author: "icellusedkars",
+        body: "test body"
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const comment = body.comment
+        expect(comment.comment_id).toBe(19)
+        expect(comment.article_id).toBe(1)
+        expect(comment.body).toBe("test body")
+        expect(comment.votes).toBe(0)
+        expect(comment.author).toBe("icellusedkars")
+
+      })
+  })
+
+  test("400: error message is returned when author does not exist", () => {
+    return request(app)
+      .post('/api/articles/1/comments')
+      .send ({
+        author: "test user",
+        body: "test body"
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const msg = body.msg
+        expect(msg).toBe(`insert or update on table "comments" violates foreign key constraint`)
+
+      })
+  })
+
+  test("404: error message is returned when article id does not exist", () => {
+    return request(app)
+      .post('/api/articles/125/comments')
+      .send ({
+        author: "icellusedkars",
+        body: "test body"
+      })
+      .expect(404)
+      .then(({ body }) => {
+        const msg = body.msg
+        expect(msg).toBe("no article id found" )
+
       })
   })
 })

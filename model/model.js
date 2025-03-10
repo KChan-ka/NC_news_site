@@ -1,5 +1,14 @@
+//**************************************************************
+//all requires
+//**************************************************************
 const db = require("../db/connection");
+const {
+    checkIfArticleIdExist,
+} = require("./model.articles.js")
+
 const format = require("pg-format");
+
+//**************************************************************
 
 exports.selectTopics = () => {
 
@@ -53,7 +62,13 @@ exports.selectArticles = () => {
         });
 };
 
-exports.selectCommentsByArticleId = (articleId) => {
+exports.selectCommentsByArticleId = async (articleId) => {
+
+    //check if article id exist
+    const articleIdExists = await checkIfArticleIdExist(articleId)
+    if (!articleIdExists) {
+        return Promise.reject({ status: 404, msg: "no article id found" });
+    }
 
     const queryString = `
     SELECT 
@@ -71,7 +86,7 @@ exports.selectCommentsByArticleId = (articleId) => {
         .query(queryString, [articleId])
         .then(({ rows }) => {
             if (rows.length === 0) {
-                return Promise.reject({ status: 404, msg: "no data found" });
+                return Promise.reject({ status: 404, msg: "no comments found" });
             }
             else {
                 return rows;
@@ -79,4 +94,26 @@ exports.selectCommentsByArticleId = (articleId) => {
         });
 };
 
+
+exports.insertCommentByArticleId = async (articleId, author, body) => {
+
+    //check if article id exist
+    const articleIdExists = await checkIfArticleIdExist(articleId)
+    if (!articleIdExists) {
+        return Promise.reject({ status: 404, msg: "no article id found" });
+    }
+
+    const queryString = `
+    INSERT INTO comments
+        (article_id, author, body)
+    VALUES
+        ($1, $2, $3)
+    RETURNING *`
+
+    return db
+        .query(queryString, [articleId, author, body])
+        .then(({ rows }) => {
+            return rows[0];
+        });
+};
 

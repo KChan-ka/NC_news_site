@@ -8,6 +8,7 @@ const app = express();
 const {
     handleEmptyDataErrors,
     handleBadRequestErrors,
+    handleForeignKeyConstrainttErrors,
 } = require("./controller/error-controller")
 
 const {
@@ -16,9 +17,12 @@ const {
     fetchArticleById,
     fetchArticles,   
     fetchCommentsByArticleId, 
+    postCommentByArticleId,
 } = require('./controller/controller')
 
 //-*************************************************************
+
+app.use(express.json());
 
 // API methods
 
@@ -32,11 +36,18 @@ app.get("/api/articles", fetchArticles)
 
 app.get("/api/articles/:article_id/comments", fetchCommentsByArticleId)
 
+app.post("/api/articles/:article_id/comments", postCommentByArticleId)
+
 
 //error handing
+
+app.use(handleForeignKeyConstrainttErrors)
+
 app.use(handleEmptyDataErrors)
 
 app.use(handleBadRequestErrors)
+
+
 
 
 //handle all the bad end points
