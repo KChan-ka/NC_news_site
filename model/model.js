@@ -8,9 +8,6 @@ exports.selectTopics = () => {
     return db
         .query(queryString)
         .then(({ rows }) => {
-            if (rows.length === 0) {
-                return Promise.reject({ status: 404, msg: "no data found" });
-            } 1
             return rows;
         });
 };
@@ -46,17 +43,32 @@ exports.selectArticles = () => {
     FROM articles a
         JOIN comments c ON a.article_id = c.article_id
     GROUP BY
-        a.author,
-        a.title,
-        a.article_id,
-        a.topic,
-        a.created_at,
-        a.votes,
-        a.article_img_url
+        a.article_id
     ORDER BY a.created_at DESC`
 
     return db
         .query(queryString)
+        .then(({ rows }) => {
+            return rows;
+        });
+};
+
+exports.selectCommentsByArticleId = (articleId) => {
+
+    const queryString = `
+    SELECT 
+        comment_id,
+        votes,
+        created_at,
+        author,
+        body,
+        article_id
+    FROM comments
+    WHERE article_id = $1
+    ORDER BY created_at DESC`
+
+    return db
+        .query(queryString, [articleId])
         .then(({ rows }) => {
             if (rows.length === 0) {
                 return Promise.reject({ status: 404, msg: "no data found" });
