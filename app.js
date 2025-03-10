@@ -13,7 +13,8 @@ const {
 const {
     fetchAllAPi,
     fetchTopics,
-    fetchArticleById,    
+    fetchArticleById,
+    fetchArticles,    
 } = require('./controller/controller')
 
 //-*************************************************************
@@ -25,6 +26,8 @@ app.get("/api", fetchAllAPi)
 app.get("/api/topics", fetchTopics)
 
 app.get("/api/articles/:article_id", fetchArticleById)
+
+app.get("/api/articles", fetchArticles)
 
 
 //error handing
