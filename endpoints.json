@@ -28,7 +28,7 @@
   },
   "GET /api/articles/:article_id": {
     "description": "serves an article by id",
-    "queries": ["article_id"],
+    "queries": [],
     "exampleResponse": {
       "articles": [
         {

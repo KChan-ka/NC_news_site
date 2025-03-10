@@ -1,7 +1,8 @@
 const {
     selectTopics,
     selectArticleById,
-    selectArticles
+    selectArticles,
+    selectCommentsByArticleId
 } = require('../model/model')
 
 const endpointsJson = require("../endpoints.json");
@@ -42,8 +43,18 @@ exports.fetchArticles = (req, res, next) => {
             res.status(200).send({ articles : rows })
         })
         .catch((err) => {
-            console.log(err, "<< controller error")
             next(err);
         })
 }
 
+//fetch comments from article id
+exports.fetchCommentsByArticleId = (req, res, next) => {
+    const {article_id} = req.params
+    selectCommentsByArticleId(article_id)
+        .then((rows) => {
+            res.status(200).send({ comments : rows })
+        })
+        .catch((err) => {
+            next(err);
+        })
+}
