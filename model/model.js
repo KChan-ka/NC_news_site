@@ -70,7 +70,6 @@ exports.selectCommentsByArticleId = (articleId) => {
     return db
         .query(queryString, [articleId])
         .then(({ rows }) => {
-            console.log(rows)
             if (rows.length === 0) {
                 return Promise.reject({ status: 404, msg: "no data found" });
             }
