@@ -16,3 +16,11 @@ exports.handleBadRequestErrors = (err, req, res, next) => {
         next(err);
     }
 }
+
+exports.handleForeignKeyViolationsErrors = (err, req, res, next) => {
+    if (err.code === "23503") {
+        res.status(400).send({ msg: `insert or update on table "comments" violates foreign key constraint`})
+    } else {
+        next(err);
+    }
+}
