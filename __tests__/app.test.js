@@ -43,7 +43,6 @@ describe("/api/topics", () => {
       .get('/api/topics')
       .expect(200)
       .then(({ body: {topics} }) => {
-        //ensure that this returns the correct number of rows
         expect(topics.length).toBe(3)
 
         topics.forEach((topic) => {
@@ -101,7 +100,6 @@ describe("/api/articles", () => {
       .get('/api/articles')
       .expect(200)
       .then(({ body : {articles} }) => {
-        //5 articles present in test db
         expect(articles.length).toBe(5)
 
 
@@ -117,7 +115,6 @@ describe("/api/articles", () => {
         })
 
 
-        //check it is sorted by date in desc order
         expect(articles).toBeSortedBy('created_at', { descending: true, })
       })
   })
@@ -145,7 +142,7 @@ describe("/api/articles", () => {
       .get('/api/articles?order=banana')
       .expect(400)
       .then(({ body : {msg} }) => {
-        expect(msg).toBe("SQL syntax error")
+        expect(msg).toBe("Incorrect data was entered")
       })
   })
 
@@ -154,7 +151,6 @@ describe("/api/articles", () => {
       .get('/api/articles?sort_by=title&order=asc&topic=mitch')
       .expect(200)
       .then(({ body : {articles} }) => {
-        //5 articles present in test db
         expect(articles.length).toBe(4)
 
         articles.forEach((article) => {
@@ -187,7 +183,6 @@ describe("/api/articles/:article_id/comments", () => {
       .get('/api/articles/3/comments')
       .expect(200)
       .then(({ body : {comments} }) => {
-        //5 articles present in test db
         expect(comments.length).toBe(2)
 
         comments.forEach((comment) => {
@@ -199,7 +194,6 @@ describe("/api/articles/:article_id/comments", () => {
           expect(comment.article_id).toBe(3)
         })
 
-        //check it is sorted by date in desc order
         expect(comments).toBeSortedBy('created_at', { descending: true, })
       })
   })
@@ -423,7 +417,6 @@ describe("GET: /api/users", () => {
       .get('/api/users')
       .expect(200)
       .then(({ body: {users} }) => {
-        //ensure that this returns the correct number of rows
         expect(users.length).toBe(4)
 
         users.forEach((user) => {

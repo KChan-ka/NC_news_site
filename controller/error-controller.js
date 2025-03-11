@@ -43,7 +43,7 @@ exports.handleMissingColumnErrors = (err, req, res, next) => {
 
 exports.handleSQLSyntaxErrors = (err, req, res, next) => {
     if (err.code === "42601") {
-        res.status(400).send({ msg: `SQL syntax error`})
+        res.status(400).send({ msg: `Incorrect data was entered`})
     } else {
         next(err);
     }
