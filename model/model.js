@@ -3,6 +3,7 @@ const {
     checkIfArticleIdExist,
 } = require("./model.articles")
 
+
 exports.selectTopics = () => {
 
     const queryString = `SELECT slug, description FROM topics`
@@ -30,8 +31,10 @@ exports.selectArticleById = (articleId) => {
         });
 };
 
-exports.selectArticles = (sort_by = "created_at", order = "desc") => {
+exports.selectArticles = (sort_by = "created_at", order = "desc", topic) => {
 
+    //building the SQL
+    const queryParams = []
     let queryString = `
     SELECT 
         a.author,
@@ -43,14 +46,21 @@ exports.selectArticles = (sort_by = "created_at", order = "desc") => {
         a.article_img_url,
         count(c.body) as comment_count
     FROM articles a
-        JOIN comments c ON a.article_id = c.article_id
-    GROUP BY
-        a.article_id `
+        JOIN comments c ON a.article_id = c.article_id `
 
-    queryString += `ORDER BY ${sort_by} ${order}`
+    if (topic) {
+        queryParams.push(topic)
+        queryString += `WHERE a.topic = $1`
+    }
+
+    queryString += `
+    GROUP BY
+        a.article_id 
+    ORDER BY ${sort_by} ${order}`
+
 
     return db
-        .query(queryString)
+        .query(queryString, queryParams)
         .then(({ rows }) => {
             return rows;
         });

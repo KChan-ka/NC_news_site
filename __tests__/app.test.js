@@ -148,6 +148,37 @@ describe("/api/articles", () => {
         expect(msg).toBe("SQL syntax error")
       })
   })
+
+  test("200: retrieves all articles from articles table filtered by topic", () => {
+    return request(app)
+      .get('/api/articles?sort_by=title&order=asc&topic=mitch')
+      .expect(200)
+      .then(({ body : {articles} }) => {
+        //5 articles present in test db
+        expect(articles.length).toBe(4)
+
+        articles.forEach((article) => {
+          expect(typeof article.author).toBe("string")
+          expect(typeof article.title).toBe("string")
+          expect(typeof article.article_id).toBe("number")
+          expect(article.topic).toBe("mitch")
+          expect(typeof article.created_at).toBe("string")
+          expect(typeof article.votes).toBe("number")
+          expect(typeof article.article_img_url).toBe("string")
+          expect(typeof article.comment_count).toBe("string")
+        })
+      })
+  })
+
+  test("200: invalid topic, returns nothing", () => {
+    return request(app)
+      .get('/api/articles?sort_by=title&order=asc&topic=banana')
+      .expect(200)
+      .then(({ body : {articles} }) => {
+        expect(articles.length).toBe(0)
+
+      })
+  })
 })
 
 describe("/api/articles/:article_id/comments", () => {
