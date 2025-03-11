@@ -212,7 +212,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
       })
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe(`Key (author)=(test user) is not present in table "users".`)
+        expect(msg).toBe(`foreign key value does not correspond to any entity id`)
 
       })
   })
@@ -240,7 +240,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
       })
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe(`Key (article_id)=(125) is not present in table \"articles\".`)
+        expect(msg).toBe(`foreign key value does not correspond to any entity id`)
 
       })
   })
@@ -266,12 +266,23 @@ describe("PATCH: /api/articles/:article_id", () => {
     return request(app)
       .patch('/api/articles/1')
       .send({
+        inc_votes: 22
+      })
+      .expect(200)
+      .then(({ body: {article} }) => {
+        expect(article.votes).toBe(122)
+      })
+  })
+
+  test("200: patch one article successfully using substraction", () => {
+    return request(app)
+      .patch('/api/articles/1')
+      .send({
         inc_votes: -18
       })
       .expect(200)
       .then(({ body: {article} }) => {
         expect(article.votes).toBe(82)
-
       })
   })
 

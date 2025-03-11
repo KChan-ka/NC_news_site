@@ -20,8 +20,8 @@ exports.fetchAllAPi = (req, res, next) => {
 //fetch all slug and description data from topics table
 exports.fetchTopics = (req, res, next) => {
     selectTopics()
-        .then((rows) => {
-            res.status(200).send({ topics: rows })
+        .then((data) => {
+            res.status(200).send({ topics: data })
         })
         .catch((err) => {
             next(err);
@@ -32,8 +32,8 @@ exports.fetchTopics = (req, res, next) => {
 exports.fetchArticleById = (req, res, next) => {
     const { article_id } = req.params
     selectArticleById(article_id)
-        .then((rows) => {
-            res.status(200).send({ article: rows })
+        .then((data) => {
+            res.status(200).send({ article: data })
         })
         .catch((err) => {
             next(err);
@@ -43,8 +43,8 @@ exports.fetchArticleById = (req, res, next) => {
 //fetch all articles
 exports.fetchArticles = (req, res, next) => {
     selectArticles()
-        .then((rows) => {
-            res.status(200).send({ articles : rows })
+        .then((data) => {
+            res.status(200).send({ articles : data })
         })
         .catch((err) => {
             next(err);
@@ -55,8 +55,8 @@ exports.fetchArticles = (req, res, next) => {
 exports.fetchCommentsByArticleId = (req, res, next) => {
     const {article_id} = req.params
     selectCommentsByArticleId(article_id)
-        .then((rows) => {
-            res.status(200).send({ comments : rows })
+        .then((data) => {
+            res.status(200).send({ comments : data })
         })
         .catch((err) => {
             next(err);
@@ -68,8 +68,8 @@ exports.postCommentByArticleId = (req, res, next) => {
     const { article_id } = req.params
     const { username, body } = req.body
     insertCommentByArticleId(article_id, username, body)
-        .then((rows) => {
-            res.status(201).send({ comment: rows })
+        .then((data) => {
+            res.status(201).send({ comment: data })
         })
         .catch((err) => {
             next(err);
@@ -81,8 +81,8 @@ exports.patchArticleByArticleId = (req, res, next) => {
     const { article_id } = req.params
     const { inc_votes } = req.body
     updateArticleByArticleId(article_id, inc_votes)
-        .then((rows) => {
-            res.status(200).send({ article: rows })
+        .then((data) => {
+            res.status(200).send({ article: data })
         })
         .catch((err) => {
             next(err);
@@ -93,7 +93,7 @@ exports.patchArticleByArticleId = (req, res, next) => {
 exports.deleteCommentByCommentId = (req, res, next) => {
     const { comment_id } = req.params
     deleteCommentByCommentId(comment_id)
-        .then((rows) => {
+        .then(() => {
             res.status(204).send()
         })
         .catch((err) => {
@@ -105,8 +105,8 @@ exports.deleteCommentByCommentId = (req, res, next) => {
 //fetch all users
 exports.fetchUsers = (req, res, next) => {
     selectUsers()
-        .then((rows) => {
-            res.status(200).send({ users: rows })
+        .then((data) => {
+            res.status(200).send({ users: data })
         })
         .catch((err) => {
             next(err);
