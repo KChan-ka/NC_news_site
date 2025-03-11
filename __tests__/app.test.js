@@ -74,7 +74,7 @@ describe("/api/articles/:article_id", () => {
           author: 'butter_bridge',
           body: 'I find this existence challenging',
           created_at: '2020-07-09T20:11:00.000Z',
-          votes: 0,
+          votes: 100,
           article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
         }
 
@@ -181,8 +181,28 @@ describe("POST: /api/articles/:article_id/comments", () => {
     return request(app)
       .post('/api/articles/1/comments')
       .send({
-        author: "icellusedkars",
+        username: "icellusedkars",
         body: "test body"
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const comment = body.comment
+        expect(comment.comment_id).toBe(19)
+        expect(comment.article_id).toBe(1)
+        expect(comment.body).toBe("test body")
+        expect(comment.votes).toBe(0)
+        expect(comment.author).toBe("icellusedkars")
+
+      })
+  })
+
+  test("201: save one comment to article id with unnecessary properties", () => {
+    return request(app)
+      .post('/api/articles/1/comments')
+      .send({
+        username: "icellusedkars",
+        body: "test body",
+        votes: 123
       })
       .expect(201)
       .then(({ body }) => {
@@ -200,28 +220,118 @@ describe("POST: /api/articles/:article_id/comments", () => {
     return request(app)
       .post('/api/articles/1/comments')
       .send({
-        author: "test user",
+        username: "test user",
         body: "test body"
       })
       .expect(400)
       .then(({ body }) => {
         const msg = body.msg
-        expect(msg).toBe(`insert or update on table "comments" violates foreign key constraint`)
+        expect(msg).toBe(`Key (author)=(test user) is not present in table "users".`)
 
       })
   })
 
-  test("404: error message is returned when article id does not exist", () => {
+  test("400: error message is returned when misssing necessary fields", () => {
+    return request(app)
+      .post('/api/articles/1/comments')
+      .send({
+        username: "icellusedkars",
+        votes: 24
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const msg = body.msg
+        expect(msg).toBe(`insert or update on table violates foreign key constraint`)
+
+      })
+  })
+
+  test("400: error message is returned when article id does not exist", () => {
     return request(app)
       .post('/api/articles/125/comments')
       .send({
-        author: "icellusedkars",
+        username: "icellusedkars",
         body: "test body"
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const msg = body.msg
+        expect(msg).toBe(`Key (article_id)=(125) is not present in table \"articles\".`)
+
+      })
+  })
+
+  test("400: error message is returned when invalid articleid", () => {
+    return request(app)
+      .post('/api/articles/katherine/comments')
+      .send({
+        username: "icellusedkars",
+        body: "test body"
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const msg = body.msg
+        expect(msg).toBe('bad request, incorrect datatype was used')
+
+      })
+  })
+})
+
+
+describe("PATCH: /api/articles/:article_id", () => {
+  test("200: patch one article successfully", () => {
+    return request(app)
+      .patch('/api/articles/1')
+      .send({
+        inc_votes : -18
+      })
+      .expect(200)
+      .then(({ body }) => {
+        const article = body.article
+        expect(article.votes).toBe(82)
+
+      })      
+  })
+
+  test("404: error message is returned when article does not exist", () => {
+    return request(app)
+      .patch('/api/articles/999')
+      .send({
+        inc_votes : 15
       })
       .expect(404)
       .then(({ body }) => {
         const msg = body.msg
-        expect(msg).toBe("no article id found")
+        console.log(msg)
+        expect(msg).toBe(`no article id found`)
+
+      })
+  })
+
+  test("400: bad formed article_id", () => {
+    return request(app)
+      .patch('/api/articles/banana')
+      .send({
+        inc_votes : 15
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const msg = body.msg
+        expect(msg).toBe("bad request, incorrect datatype was used")
+
+      })
+  })
+
+  test("400: invalid inc_votes", () => {
+    return request(app)
+      .patch('/api/articles/1')
+      .send({
+        inc_votes : "banana"
+      })
+      .expect(400)
+      .then(({ body }) => {
+        const msg = body.msg
+        expect(msg).toBe("bad request, incorrect datatype was used")
 
       })
   })

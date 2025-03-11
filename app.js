@@ -9,6 +9,7 @@ const {
     handleEmptyDataErrors,
     handleBadRequestErrors,
     handleForeignKeyViolationsErrors,
+    handleAssignNullToNonNullErrors,
 } = require("./controller/error-controller")
 
 const {
@@ -18,6 +19,7 @@ const {
     fetchArticles,   
     fetchCommentsByArticleId, 
     postCommentByArticleId,
+    patchArticleByArticleId,
 } = require('./controller/controller')
 
 //-*************************************************************
@@ -39,9 +41,13 @@ app.get("/api/articles/:article_id/comments", fetchCommentsByArticleId)
 
 app.post("/api/articles/:article_id/comments", postCommentByArticleId)
 
+app.patch("/api/articles/:article_id", patchArticleByArticleId)
+
 
 //error handing
 app.use(handleEmptyDataErrors)
+
+app.use(handleAssignNullToNonNullErrors)
 
 app.use(handleForeignKeyViolationsErrors)
 
