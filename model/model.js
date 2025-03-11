@@ -145,6 +145,7 @@ exports.selectUsers = () => {
     return db
         .query(queryString)
         .then(({ rows }) => {
+            console.log(rows)
             return rows;
         });
 };
