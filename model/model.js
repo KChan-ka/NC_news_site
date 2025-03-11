@@ -2,7 +2,6 @@ const db = require("../db/connection");
 const {
     checkIfArticleIdExist,
 } = require("./model.articles")
-const format = require("pg-format");
 
 exports.selectTopics = () => {
 
@@ -85,12 +84,6 @@ exports.selectCommentsByArticleId = (articleId) => {
 
 exports.insertCommentByArticleId = async (articleId, author, body) => {
 
-    //check if article id exist
-    const articleIdExists = await checkIfArticleIdExist(articleId)
-    if (!articleIdExists) {
-        return Promise.reject({ status: 404, msg: "no article id found" });
-    }
-
     const queryString = `
     INSERT INTO comments
         (article_id, author, body)
@@ -104,4 +97,27 @@ exports.insertCommentByArticleId = async (articleId, author, body) => {
             return rows[0];
         });
 };
+
+
+exports.updateArticleByArticleId = async (articleId, incVotes) => {
+
+    //check if article id exist
+    const articleIdExists = await checkIfArticleIdExist(articleId)
+    if (!articleIdExists) {
+        return Promise.reject({ status: 404, msg: "no article id found" });
+    }
+
+    const queryString = `
+    UPDATE articles
+    SET votes = votes + ($1) 
+    WHERE article_id = $2
+    RETURNING *`
+
+    return db
+        .query(queryString, [incVotes, articleId])
+        .then(({ rows }) => {
+            return rows[0];
+        });
+};
+
 

@@ -4,6 +4,7 @@ const {
     selectArticles,
     selectCommentsByArticleId,
     insertCommentByArticleId,
+    updateArticleByArticleId,
 } = require('../model/model')
 
 const endpointsJson = require("../endpoints.json");
@@ -63,10 +64,23 @@ exports.fetchCommentsByArticleId = (req, res, next) => {
 //post a new comment
 exports.postCommentByArticleId = (req, res, next) => {
     const { article_id } = req.params
-    const { author, body } = req.body
-    insertCommentByArticleId(article_id, author, body)
+    const { username, body } = req.body
+    insertCommentByArticleId(article_id, username, body)
         .then((rows) => {
             res.status(201).send({ comment: rows })
+        })
+        .catch((err) => {
+            next(err);
+        })
+}
+
+//patch a comment
+exports.patchArticleByArticleId = (req, res, next) => {
+    const { article_id } = req.params
+    const { inc_votes } = req.body
+    updateArticleByArticleId(article_id, inc_votes)
+        .then((rows) => {
+            res.status(200).send({ article: rows })
         })
         .catch((err) => {
             next(err);

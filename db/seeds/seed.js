@@ -76,9 +76,9 @@ async function createTableComments() {
     CREATE TABLE comments (
       comment_id SERIAL PRIMARY KEY,
       article_id INT REFERENCES articles(article_id),
-      body TEXT,
+      body TEXT NOT NULL,
       votes INT DEFAULT 0,
-      author VARCHAR(100) REFERENCES users(username),
+      author VARCHAR(100) NOT NULL REFERENCES users(username),
       created_at TIMESTAMP NOT NULL DEFAULT NOW()
     );
   `)
@@ -137,13 +137,14 @@ async function insertTableArticles(articlesData) {
       article.topic,
       article.author,
       article.body,
+      article.votes,
       dbDate.created_at,
       article.article_img_url
     ]
   })
 
   //generate the INSERT formatted line
-  const insertIntoString = format('INSERT INTO articles (title, topic, author, body, created_at, article_img_url) VALUES %L RETURNING *', formattedData)
+  const insertIntoString = format('INSERT INTO articles (title, topic, author, body, votes, created_at, article_img_url) VALUES %L RETURNING *', formattedData)
 
   //perform insert into
   const output = await db.query(insertIntoString)
