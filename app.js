@@ -10,6 +10,8 @@ const {
     handleBadRequestErrors,
     handleForeignKeyViolationsErrors,
     handleAssignNullToNonNullErrors,
+    handleMissingColumnErrors,
+    handleSQLSyntaxErrors,
 } = require("./controller/error-controller")
 
 const {
@@ -52,6 +54,10 @@ app.delete("/api/comments/:comment_id", deleteCommentByCommentId)
 
 //error handing
 app.use(handleEmptyDataErrors)
+
+app.use(handleSQLSyntaxErrors)
+
+app.use(handleMissingColumnErrors)
 
 app.use(handleAssignNullToNonNullErrors)
 

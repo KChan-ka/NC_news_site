@@ -32,3 +32,19 @@ exports.handleAssignNullToNonNullErrors = (err, req, res, next) => {
         next(err);
     }
 }
+
+exports.handleMissingColumnErrors = (err, req, res, next) => {
+    if (err.code === "42703") {
+        res.status(400).send({ msg: `column does not exist`})
+    } else {
+        next(err);
+    }
+}
+
+exports.handleSQLSyntaxErrors = (err, req, res, next) => {
+    if (err.code === "42601") {
+        res.status(400).send({ msg: `SQL syntax error`})
+    } else {
+        next(err);
+    }
+}

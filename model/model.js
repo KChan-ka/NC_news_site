@@ -30,9 +30,9 @@ exports.selectArticleById = (articleId) => {
         });
 };
 
-exports.selectArticles = () => {
+exports.selectArticles = (sort_by = "created_at", order = "desc") => {
 
-    const queryString = `
+    let queryString = `
     SELECT 
         a.author,
         a.title,
@@ -45,8 +45,9 @@ exports.selectArticles = () => {
     FROM articles a
         JOIN comments c ON a.article_id = c.article_id
     GROUP BY
-        a.article_id
-    ORDER BY a.created_at DESC`
+        a.article_id `
+
+    queryString += `ORDER BY ${sort_by} ${order}`
 
     return db
         .query(queryString)
@@ -145,7 +146,6 @@ exports.selectUsers = () => {
     return db
         .query(queryString)
         .then(({ rows }) => {
-            console.log(rows)
             return rows;
         });
 };
