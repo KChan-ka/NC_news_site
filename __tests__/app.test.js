@@ -121,6 +121,33 @@ describe("/api/articles", () => {
         expect(articles).toBeSortedBy('created_at', { descending: true, })
       })
   })
+
+  test("200: retrieves all articles from articles table sorted by title in asc order", () => {
+    return request(app)
+      .get('/api/articles?sort_by=title&order=asc')
+      .expect(200)
+      .then(({ body : {articles} }) => {
+        expect(articles).toBeSortedBy('title', { ascending: true, })
+      })
+  })
+
+  test("400: invalid column error", () => {
+    return request(app)
+      .get('/api/articles?sort_by=banana')
+      .expect(400)
+      .then(({ body : {msg} }) => {
+        expect(msg).toBe("column does not exist")
+      })
+  })
+
+  test("400: invalid order parameter", () => {
+    return request(app)
+      .get('/api/articles?order=banana')
+      .expect(400)
+      .then(({ body : {msg} }) => {
+        expect(msg).toBe("SQL syntax error")
+      })
+  })
 })
 
 describe("/api/articles/:article_id/comments", () => {
@@ -376,3 +403,5 @@ describe("GET: /api/users", () => {
       })
   })
 })
+
+
