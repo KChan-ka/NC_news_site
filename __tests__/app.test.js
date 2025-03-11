@@ -42,8 +42,7 @@ describe("/api/topics", () => {
     return request(app)
       .get('/api/topics')
       .expect(200)
-      .then(({ body }) => {
-        const topics = body.topics
+      .then(({ body: {topics} }) => {
         //ensure that this returns the correct number of rows
         expect(topics.length).toBe(3)
 
@@ -51,7 +50,6 @@ describe("/api/topics", () => {
           expect(typeof topic.slug).toBe("string")
           expect(typeof topic.description).toBe("string")
         })
-
       })
   })
 })
@@ -102,8 +100,7 @@ describe("/api/articles", () => {
     return request(app)
       .get('/api/articles')
       .expect(200)
-      .then(({ body }) => {
-        const articles = body.articles
+      .then(({ body : {articles} }) => {
         //5 articles present in test db
         expect(articles.length).toBe(5)
 
@@ -131,8 +128,7 @@ describe("/api/articles/:article_id/comments", () => {
     return request(app)
       .get('/api/articles/3/comments')
       .expect(200)
-      .then(({ body }) => {
-        const comments = body.comments
+      .then(({ body : {comments} }) => {
         //5 articles present in test db
         expect(comments.length).toBe(2)
 
@@ -178,8 +174,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
         body: "test body"
       })
       .expect(201)
-      .then(({ body }) => {
-        const comment = body.comment
+      .then(({ body : {comment} }) => {
         expect(comment.comment_id).toBe(19)
         expect(comment.article_id).toBe(1)
         expect(comment.body).toBe("test body")
@@ -198,8 +193,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
         votes: 123
       })
       .expect(201)
-      .then(({ body }) => {
-        const comment = body.comment
+      .then(({ body: {comment} }) => {
         expect(comment.comment_id).toBe(19)
         expect(comment.article_id).toBe(1)
         expect(comment.body).toBe("test body")
@@ -275,8 +269,7 @@ describe("PATCH: /api/articles/:article_id", () => {
         inc_votes: -18
       })
       .expect(200)
-      .then(({ body }) => {
-        const article = body.article
+      .then(({ body: {article} }) => {
         expect(article.votes).toBe(82)
 
       })
@@ -350,6 +343,25 @@ describe("DELETE: /api/comments/:comment_id", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("bad request, incorrect datatype was used")
+      })
+  })
+})
+
+
+describe("GET: /api/users", () => {
+  test("200: retrieves all users from users table", () => {
+    return request(app)
+      .get('/api/users')
+      .expect(200)
+      .then(({ body: {users} }) => {
+        //ensure that this returns the correct number of rows
+        expect(users.length).toBe(4)
+
+        users.forEach((user) => {
+          expect(typeof user.username).toBe("string")
+          expect(typeof user.name).toBe("string")
+          expect(typeof user.avatar_url).toBe("string")
+        })
       })
   })
 })
