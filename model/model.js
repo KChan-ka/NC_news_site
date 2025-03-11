@@ -133,8 +133,6 @@ exports.deleteCommentByCommentId = (commentId) => {
         .then(({rows}) => {
             if (rows.length === 0) {
                 return Promise.reject({ status: 404, msg: "comment id not found" });
-            } else {
-                return rows[0]
             }
         });
 };
