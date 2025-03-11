@@ -78,6 +78,10 @@
   },
   "POST /api/articles/:article_id/comments": {
     "description": "add new comments by article id",
+    "body": {
+      "username": "icellusedkars",
+      "body": "test body"
+    },
     "queries": [],
     "exampleResponse": {
       "comment": {
@@ -93,6 +97,9 @@
   "PATCH /api/articles/:article_id/": {
     "description": "patch article by article id",
     "queries": [],
+    "body": {
+      "inc_votes": -18
+    },
     "exampleResponse": {
       "article": {
         "article_id": 1,
