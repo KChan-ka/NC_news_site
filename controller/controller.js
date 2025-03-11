@@ -90,7 +90,7 @@ exports.patchArticleByArticleId = (req, res, next) => {
         })
 }
 
-//delete comment
+//delete comment by comment id
 exports.deleteCommentByCommentId = (req, res, next) => {
     const { comment_id } = req.params
     deleteCommentByCommentId(comment_id)
