@@ -20,6 +20,7 @@ const {
     fetchCommentsByArticleId, 
     postCommentByArticleId,
     patchArticleByArticleId,
+    deleteCommentByCommentId,
 } = require('./controller/controller')
 
 //-*************************************************************
@@ -42,6 +43,8 @@ app.get("/api/articles/:article_id/comments", fetchCommentsByArticleId)
 app.post("/api/articles/:article_id/comments", postCommentByArticleId)
 
 app.patch("/api/articles/:article_id", patchArticleByArticleId)
+
+app.delete("/api/comments/:comment_id", deleteCommentByCommentId)
 
 
 //error handing

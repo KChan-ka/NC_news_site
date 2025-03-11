@@ -7,8 +7,6 @@ const app = require('../app.js');
 const request = require('supertest');
 const jestSorted = require('jest-sorted')
 
-
-
 beforeEach(() => {
   return seed(data);
 })
@@ -33,8 +31,7 @@ describe("inexistent endpoint test", () => {
     return request(app)
       .get('/api/random')
       .expect(404)
-      .then(({ body }) => {
-        const msg = body.msg
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("endpoint doesn't exist")
       })
   })
@@ -85,8 +82,7 @@ describe("/api/articles/:article_id", () => {
     return request(app)
       .get('/api/articles/99')
       .expect(404)
-      .then(({ body }) => {
-        const msg = body.msg
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("no data found")
       })
   })
@@ -95,8 +91,7 @@ describe("/api/articles/:article_id", () => {
     return request(app)
       .get('/api/articles/banana')
       .expect(400)
-      .then(({ body }) => {
-        const msg = body.msg
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("bad request, incorrect datatype was used")
       })
   })
@@ -159,8 +154,7 @@ describe("/api/articles/:article_id/comments", () => {
     return request(app)
       .get('/api/articles/37/comments')
       .expect(404)
-      .then(({ body }) => {
-        const msg = body.msg
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("no data found")
       })
   })
@@ -169,8 +163,7 @@ describe("/api/articles/:article_id/comments", () => {
     return request(app)
       .get('/api/articles/banana/comments')
       .expect(400)
-      .then(({ body }) => {
-        const msg = body.msg
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("bad request, incorrect datatype was used")
       })
   })
@@ -224,8 +217,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
         body: "test body"
       })
       .expect(400)
-      .then(({ body }) => {
-        const msg = body.msg
+      .then(({ body: { msg } }) => {
         expect(msg).toBe(`Key (author)=(test user) is not present in table "users".`)
 
       })
@@ -239,8 +231,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
         votes: 24
       })
       .expect(400)
-      .then(({ body }) => {
-        const msg = body.msg
+      .then(({ body: { msg } }) => {
         expect(msg).toBe(`insert or update on table violates foreign key constraint`)
 
       })
@@ -254,8 +245,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
         body: "test body"
       })
       .expect(400)
-      .then(({ body }) => {
-        const msg = body.msg
+      .then(({ body: { msg } }) => {
         expect(msg).toBe(`Key (article_id)=(125) is not present in table \"articles\".`)
 
       })
@@ -269,8 +259,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
         body: "test body"
       })
       .expect(400)
-      .then(({ body }) => {
-        const msg = body.msg
+      .then(({ body: { msg } }) => {
         expect(msg).toBe('bad request, incorrect datatype was used')
 
       })
@@ -283,26 +272,24 @@ describe("PATCH: /api/articles/:article_id", () => {
     return request(app)
       .patch('/api/articles/1')
       .send({
-        inc_votes : -18
+        inc_votes: -18
       })
       .expect(200)
       .then(({ body }) => {
         const article = body.article
         expect(article.votes).toBe(82)
 
-      })      
+      })
   })
 
   test("404: error message is returned when article does not exist", () => {
     return request(app)
       .patch('/api/articles/999')
       .send({
-        inc_votes : 15
+        inc_votes: 15
       })
       .expect(404)
-      .then(({ body }) => {
-        const msg = body.msg
-        console.log(msg)
+      .then(({ body: { msg } }) => {
         expect(msg).toBe(`no article id found`)
 
       })
@@ -312,11 +299,10 @@ describe("PATCH: /api/articles/:article_id", () => {
     return request(app)
       .patch('/api/articles/banana')
       .send({
-        inc_votes : 15
+        inc_votes: 15
       })
       .expect(400)
-      .then(({ body }) => {
-        const msg = body.msg
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("bad request, incorrect datatype was used")
 
       })
@@ -326,13 +312,44 @@ describe("PATCH: /api/articles/:article_id", () => {
     return request(app)
       .patch('/api/articles/1')
       .send({
-        inc_votes : "banana"
+        inc_votes: "banana"
       })
       .expect(400)
-      .then(({ body }) => {
-        const msg = body.msg
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("bad request, incorrect datatype was used")
 
+      })
+  })
+})
+
+describe("DELETE: /api/comments/:comment_id", () => {
+  test("204: delete one comment successfully", () => {
+    return request(app)
+      .delete('/api/comments/4')
+      .expect(204)
+      .then(() => {
+        return db.query(`SELECT comment_id FROM comments WHERE comment_id = $1`, [4])
+          .then(({ rows }) => {
+            expect(rows.length).toBe(0)
+          })
+      })
+  })
+
+  test("404: comment id not found", () => {
+    return request(app)
+      .delete('/api/comments/476')
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("comment id not found")
+      })
+  })
+
+  test("400: comment id not valid", () => {
+    return request(app)
+      .delete('/api/comments/banana')
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request, incorrect datatype was used")
       })
   })
 })
