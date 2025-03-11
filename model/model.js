@@ -90,7 +90,7 @@ exports.insertCommentByArticleId = async (articleId, author, body) => {
     if (!articleIdExists) {
         return Promise.reject({ status: 404, msg: "no article id found" });
     }
-    console.log("reaching", articleId, author, body)
+
     const queryString = `
     INSERT INTO comments
         (article_id, author, body)

@@ -67,5 +67,21 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "add new comments by article id",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 19,
+          "article_id": 1,
+          "body": "test body",
+          "votes": 0,
+          "author": "icellusedkars",
+          "created_at": "2025-03-11T09:11:37.376Z"
+        }
+      ]
+    }
   }
 }
