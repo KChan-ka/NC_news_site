@@ -15,6 +15,7 @@ const {
 const {
     fetchAllAPi,
     fetchTopics,
+    fetchUsers,
     fetchArticleById,
     fetchArticles,   
     fetchCommentsByArticleId, 
@@ -33,6 +34,8 @@ app.use(express.json());
 app.get("/api", fetchAllAPi)
 
 app.get("/api/topics", fetchTopics)
+
+app.get("/api/users", fetchUsers)
 
 app.get("/api/articles/:article_id", fetchArticleById)
 

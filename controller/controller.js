@@ -1,5 +1,6 @@
 const {
     selectTopics,
+    selectUsers,
     selectArticleById,
     selectArticles,
     selectCommentsByArticleId,
@@ -100,3 +101,14 @@ exports.deleteCommentByCommentId = (req, res, next) => {
         })
 }
 
+
+//fetch all users
+exports.fetchUsers = (req, res, next) => {
+    selectUsers()
+        .then((rows) => {
+            res.status(200).send({ users: rows })
+        })
+        .catch((err) => {
+            next(err);
+        })
+}
