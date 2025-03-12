@@ -56,7 +56,7 @@ exports.selectArticleById = (articleId, isCommentCount = false) => {
         });
 };
 
-exports.selectArticles = (sort_by = "created_at", order = "desc", topic) => {
+exports.selectArticles = (sort_by = "created_at", order = "desc", topic, limit = 10, page = 1) => {
 
     //building the SQL
     const queryParams = []
@@ -73,15 +73,25 @@ exports.selectArticles = (sort_by = "created_at", order = "desc", topic) => {
     FROM articles a
         LEFT JOIN comments c ON a.article_id = c.article_id `
 
+    //if search by parameter, add WHERE
     if (topic) {
         queryParams.push(topic)
         queryString += `WHERE a.topic = $1`
     }
 
+    //add sort_by and order
     queryString += `
     GROUP BY
         a.article_id 
-    ORDER BY ${sort_by} ${order}`
+    ORDER BY ${sort_by} ${order}
+    LIMIT ${limit}  `
+
+    //pagination
+    //offsetValue is calculated with limit
+    const offsetValue = limit * (page - 1)
+
+    if (page !== 1) {
+        queryString += `OFFSET ${offsetValue}`    }
 
 
     return db
@@ -94,8 +104,8 @@ exports.selectArticles = (sort_by = "created_at", order = "desc", topic) => {
 exports.selectCommentsByArticleId = (articleId) => {
 
     const queryString = `
-    SELECT 
-        comment_id,
+    SELECT
+    comment_id,
         votes,
         created_at,
         author,
@@ -125,7 +135,7 @@ exports.insertCommentByArticleId = async (articleId, author, body) => {
         (article_id, author, body)
     VALUES
         ($1, $2, $3)
-    RETURNING *`
+    RETURNING * `
 
     return db
         .query(queryString, [articleId, author, body])
@@ -147,7 +157,7 @@ exports.updateArticleByArticleId = async (articleId, incVotes) => {
     UPDATE articles
     SET votes = votes + ($1) 
     WHERE article_id = $2
-    RETURNING *`
+    RETURNING * `
 
     return db
         .query(queryString, [incVotes, articleId])
@@ -162,7 +172,7 @@ exports.deleteCommentByCommentId = (commentId) => {
     const queryString = `
     DELETE FROM comments
     WHERE comment_id = $1
-    RETURNING *`
+    RETURNING * `
 
     return db
         .query(queryString, [commentId])
@@ -217,7 +227,7 @@ exports.updateCommentByCommentId = async (commentId, incVotes) => {
     UPDATE comments
     SET votes = votes + ($1) 
     WHERE comment_id = $2
-    RETURNING *`
+    RETURNING * `
 
     return db
         .query(queryString, [incVotes, commentId])
@@ -234,7 +244,7 @@ exports.insertArticle = async (author, title, body, topic, articleImgUrl = "http
         (author, title, body, topic, article_img_url)
     VALUES
         ($1, $2, $3, $4, $5)
-    RETURNING *`
+    RETURNING * `
 
     const newArticle =  await db.query(queryString, [author, title, body, topic, articleImgUrl])
         .then( ({ rows }) => {
