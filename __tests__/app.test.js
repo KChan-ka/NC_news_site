@@ -179,8 +179,8 @@ describe("/api/articles", () => {
     return request(app)
       .get('/api/articles?sort_by=article_id&order=asc&limit=9')
       .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(9)
+      .then(({ body: { articles, total_count } }) => {
+        expect(total_count).toBe(9)
 
         articles.forEach((article) => {
           expect(typeof article.author).toBe("string")
@@ -199,10 +199,8 @@ describe("/api/articles", () => {
     return request(app)
       .get('/api/articles?sort_by=article_id&order=asc&limit=9&p=2')
       .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(4)
-
-
+      .then(({ body: { articles, total_count } }) => {
+        expect(total_count).toBe(4)
         expect(articles[0].article_id).toBe(10)
 
       })
