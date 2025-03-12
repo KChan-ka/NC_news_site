@@ -345,7 +345,7 @@ describe("PATCH: /api/articles/:article_id", () => {
       })
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe(`no article id found`)
+        expect(msg).toBe(`no article found`)
 
       })
   })
@@ -447,6 +447,72 @@ describe("GET: /api/users/:username", () => {
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("no data found")
+      })
+  })
+})
+
+
+describe("PATCH: /api/comments/:comment_id", () => {
+  test("200: patch one comment successfully", () => {
+    return request(app)
+      .patch('/api/comments/1')
+      .send({
+        inc_votes: 15
+      })
+      .expect(200)
+      .then(({ body: {comment} }) => {
+        expect(comment.votes).toBe(31)
+      })
+  })
+
+  test("200: patch one comment successfully using substraction", () => {
+    return request(app)
+      .patch('/api/comments/1')
+      .send({
+        inc_votes: -18
+      })
+      .expect(200)
+      .then(({ body: {comment} }) => {
+        expect(comment.votes).toBe(-2)
+      })
+  })
+
+  test("404: error message is returned when comment does not exist", () => {
+    return request(app)
+      .patch('/api/comments/999')
+      .send({
+        inc_votes: 15
+      })
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe(`no comment found`)
+
+      })
+  })
+
+  test("400: bad formed comment id", () => {
+    return request(app)
+      .patch('/api/comments/banana')
+      .send({
+        inc_votes: 15
+      })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request, incorrect datatype was used")
+
+      })
+  })
+
+  test("400: invalid inc_votes", () => {
+    return request(app)
+      .patch('/api/comments/1')
+      .send({
+        inc_votes: "banana"
+      })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request, incorrect datatype was used")
+
       })
   })
 })

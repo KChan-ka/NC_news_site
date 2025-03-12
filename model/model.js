@@ -3,6 +3,10 @@ const {
     checkIfArticleIdExist,
 } = require("./model.articles")
 
+const {
+    checkIfCommentIdExist,
+} = require("./model.comments")
+
 
 exports.selectTopics = () => {
 
@@ -115,7 +119,7 @@ exports.updateArticleByArticleId = async (articleId, incVotes) => {
     //check if article id exist
     const articleIdExists = await checkIfArticleIdExist(articleId)
     if (!articleIdExists) {
-        return Promise.reject({ status: 404, msg: "no article id found" });
+        return Promise.reject({ status: 404, msg: "no article found" });
     }
 
     const queryString = `
@@ -179,3 +183,25 @@ exports.selectUserByUsername = (username) => {
             }
         });
 };
+
+exports.updateCommentByCommentId = async (commentId, incVotes) => {
+
+    //check if comment id exist
+    const commentIdExists = await checkIfCommentIdExist(commentId)
+    if (!commentIdExists) {
+        return Promise.reject({ status: 404, msg: "no comment found" });
+    }
+
+    const queryString = `
+    UPDATE comments
+    SET votes = votes + ($1) 
+    WHERE comment_id = $2
+    RETURNING *`
+
+    return db
+        .query(queryString, [incVotes, commentId])
+        .then(({ rows }) => {
+            return rows[0];
+        });
+};
+

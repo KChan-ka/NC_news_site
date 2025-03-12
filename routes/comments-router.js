@@ -4,6 +4,7 @@ const controller = require("../controller/controller")
 
 commentsRouter.route("/:comment_id")
     .delete(controller.deleteCommentByCommentId)
+    .patch(controller.patchCommentByCommentId)
 
 
 
