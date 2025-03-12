@@ -35,7 +35,7 @@ exports.handleAssignNullToNonNullErrors = (err, req, res, next) => {
 
 exports.handleMissingColumnErrors = (err, req, res, next) => {
     if (err.code === "42703") {
-        res.status(400).send({ msg: `column does not exist`})
+        res.status(400).send({ msg: `incorrect parameter entered`})
     } else {
         next(err);
     }

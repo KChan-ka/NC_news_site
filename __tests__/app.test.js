@@ -99,7 +99,7 @@ describe("/api/articles", () => {
       .get('/api/articles')
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(13)
+        expect(articles.length).toBe(10)
 
 
         articles.forEach((article) => {
@@ -132,7 +132,7 @@ describe("/api/articles", () => {
       .get('/api/articles?sort_by=banana')
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("column does not exist")
+        expect(msg).toBe("incorrect parameter entered")
       })
   })
 
@@ -150,7 +150,7 @@ describe("/api/articles", () => {
       .get('/api/articles?sort_by=title&order=asc&topic=mitch')
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles.length).toBe(12)
+        expect(articles.length).toBe(10)
 
         articles.forEach((article) => {
           expect(typeof article.author).toBe("string")
@@ -171,6 +171,60 @@ describe("/api/articles", () => {
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles.length).toBe(0)
+
+      })
+  })
+
+  test("200: pagination test, test limiting", () => {
+    return request(app)
+      .get('/api/articles?sort_by=article_id&order=asc&limit=9')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(9)
+
+        articles.forEach((article) => {
+          expect(typeof article.author).toBe("string")
+          expect(typeof article.title).toBe("string")
+          expect(typeof article.article_id).toBe("number")
+          expect(typeof article.topic).toBe("string")
+          expect(typeof article.created_at).toBe("string")
+          expect(typeof article.votes).toBe("number")
+          expect(typeof article.article_img_url).toBe("string")
+          expect(typeof article.comment_count).toBe("string")
+        })
+      })
+  })
+
+  test("200: pagination test, test page", () => {
+    return request(app)
+      .get('/api/articles?sort_by=article_id&order=asc&limit=9&p=2')
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(4)
+
+
+        expect(articles[0].article_id).toBe(10)
+
+      })
+  })
+
+  test("400: pagination test, invalid limit", () => {
+    return request(app)
+      .get('/api/articles?sort_by=article_id&order=asc&limit=test')
+      .expect(400)
+      .then(({ body: { msg } }) => {
+
+        expect(msg).toBe("incorrect parameter entered")
+
+      })
+  })
+  test("400: pagination test, invalid page", () => {
+    return request(app)
+      .get('/api/articles?sort_by=article_id&order=asc&limit=5&p=banana')
+      .expect(400)
+      .then(({ body: { msg } }) => {
+
+        expect(msg).toBe("incorrect parameter entered")
 
       })
   })
