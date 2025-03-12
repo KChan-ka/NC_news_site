@@ -9,6 +9,7 @@ const {
     deleteCommentByCommentId,
     selectUserByUsername,
     updateCommentByCommentId,
+    insertArticle,
 } = require('../model/model')
 
 const endpointsJson = require("../endpoints.json");
@@ -137,6 +138,18 @@ exports.patchCommentByCommentId = (req, res, next) => {
     updateCommentByCommentId(comment_id, inc_votes)
         .then((data) => {
             res.status(200).send({ comment: data })
+        })
+        .catch((err) => {
+            next(err);
+        })
+}
+
+//post a new article
+exports.postArticle = (req, res, next) => {
+    const { author, title, body, topic, article_img_url } = req.body
+    insertArticle(author, title, body, topic, article_img_url)
+        .then((data) => {
+            res.status(201).send({ article: data })
         })
         .catch((err) => {
             next(err);

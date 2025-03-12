@@ -61,8 +61,8 @@ async function createTableArticles() {
     CREATE TABLE articles (
       article_id SERIAL PRIMARY KEY,
       title VARCHAR(100),
-      topic VARCHAR(100) REFERENCES topics(slug),
-      author VARCHAR(100) REFERENCES users(username),
+      topic VARCHAR(100) NOT NULL REFERENCES topics(slug),
+      author VARCHAR(100) NOT NULL REFERENCES users(username),
       body TEXT,
       created_at TIMESTAMP NOT NULL DEFAULT NOW(),
       votes INT DEFAULT 0,

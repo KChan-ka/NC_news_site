@@ -27,7 +27,7 @@ exports.handleForeignKeyViolationsErrors = (err, req, res, next) => {
 
 exports.handleAssignNullToNonNullErrors = (err, req, res, next) => {
     if (err.code === "23502") {
-        res.status(400).send({ msg: `insert or update on table violates foreign key constraint`})
+        res.status(400).send({ msg: `bad request, missing value in request`})
     } else {
         next(err);
     }
