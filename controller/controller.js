@@ -8,6 +8,7 @@ const {
     updateArticleByArticleId,
     deleteCommentByCommentId,
     selectUserByUsername,
+    updateCommentByCommentId,
 } = require('../model/model')
 
 const endpointsJson = require("../endpoints.json");
@@ -122,6 +123,20 @@ exports.fetchUserByUsername = (req, res, next) => {
     selectUserByUsername(username)
         .then((data) => {
             res.status(200).send({ user: data })
+        })
+        .catch((err) => {
+            next(err);
+        })
+}
+
+//patch comment by comment id
+exports.patchCommentByCommentId = (req, res, next) => {
+    const {comment_id} = req.params
+    const {inc_votes} = req.body
+
+    updateCommentByCommentId(comment_id, inc_votes)
+        .then((data) => {
+            res.status(200).send({ comment: data })
         })
         .catch((err) => {
             next(err);
