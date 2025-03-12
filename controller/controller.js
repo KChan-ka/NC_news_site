@@ -6,7 +6,8 @@ const {
     selectCommentsByArticleId,
     insertCommentByArticleId,
     updateArticleByArticleId,
-    deleteCommentByCommentId
+    deleteCommentByCommentId,
+    selectUserByUsername,
 } = require('../model/model')
 
 const endpointsJson = require("../endpoints.json");
@@ -108,6 +109,19 @@ exports.fetchUsers = (req, res, next) => {
     selectUsers()
         .then((data) => {
             res.status(200).send({ users: data })
+        })
+        .catch((err) => {
+            next(err);
+        })
+}
+
+//fetch user by username
+exports.fetchUserByUsername = (req, res, next) => {
+    const {username} = req.params
+
+    selectUserByUsername(username)
+        .then((data) => {
+            res.status(200).send({ user: data })
         })
         .catch((err) => {
             next(err);
