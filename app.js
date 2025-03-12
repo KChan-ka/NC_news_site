@@ -4,6 +4,7 @@
 
 const express = require("express");
 const app = express();
+const apiRouter = require("./routes/api-router")
 
 const {
     handleEmptyDataErrors,
@@ -14,42 +15,12 @@ const {
     handleSQLSyntaxErrors,
 } = require("./controller/error-controller")
 
-const {
-    fetchAllAPi,
-    fetchTopics,
-    fetchUsers,
-    fetchArticleById,
-    fetchArticles,   
-    fetchCommentsByArticleId, 
-    postCommentByArticleId,
-    patchArticleByArticleId,
-    deleteCommentByCommentId,
-} = require('./controller/controller')
-
 //-*************************************************************
 
 app.use(express.json());
 
-
 // API methods
-
-app.get("/api", fetchAllAPi)
-
-app.get("/api/topics", fetchTopics)
-
-app.get("/api/users", fetchUsers)
-
-app.get("/api/articles/:article_id", fetchArticleById)
-
-app.get("/api/articles", fetchArticles)
-
-app.get("/api/articles/:article_id/comments", fetchCommentsByArticleId)
-
-app.post("/api/articles/:article_id/comments", postCommentByArticleId)
-
-app.patch("/api/articles/:article_id", patchArticleByArticleId)
-
-app.delete("/api/comments/:comment_id", deleteCommentByCommentId)
+app.use("/api", apiRouter);
 
 
 //error handing
