@@ -19,9 +19,30 @@ exports.selectTopics = () => {
         });
 };
 
-exports.selectArticleById = (articleId) => {
+exports.selectArticleById = (articleId, isCommentCount = false) => {
 
-    const queryString = `SELECT * FROM articles WHERE article_id = $1`
+    let queryString = ""
+
+    if (!isCommentCount) {
+        queryString = `SELECT * FROM articles WHERE article_id = $1`
+    } else {
+        queryString = `
+        SELECT 
+            a.author,
+            a.title,
+            a.article_id,
+            a.topic,
+            a.body,
+            a.created_at,
+            a.votes,
+            a.article_img_url,
+            count(c.body) as comment_count
+        FROM articles a
+            LEFT JOIN comments c ON a.article_id = c.article_id
+        WHERE a.article_id = $1
+        GROUP BY
+            a.article_id`
+    }
 
     return db
         .query(queryString, [articleId])
@@ -50,7 +71,7 @@ exports.selectArticles = (sort_by = "created_at", order = "desc", topic) => {
         a.article_img_url,
         count(c.body) as comment_count
     FROM articles a
-        JOIN comments c ON a.article_id = c.article_id `
+        LEFT JOIN comments c ON a.article_id = c.article_id `
 
     if (topic) {
         queryParams.push(topic)
@@ -205,3 +226,20 @@ exports.updateCommentByCommentId = async (commentId, incVotes) => {
         });
 };
 
+
+exports.insertArticle = async (author, title, body, topic, articleImgUrl = "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700") => {
+
+    const queryString = `
+    INSERT INTO articles
+        (author, title, body, topic, article_img_url)
+    VALUES
+        ($1, $2, $3, $4, $5)
+    RETURNING *`
+
+    const newArticle =  await db.query(queryString, [author, title, body, topic, articleImgUrl])
+        .then( ({ rows }) => {
+            return rows[0]
+        })
+
+    return await this.selectArticleById(newArticle.article_id, true)
+};

@@ -42,7 +42,7 @@ describe("/api/topics", () => {
     return request(app)
       .get('/api/topics')
       .expect(200)
-      .then(({ body: {topics} }) => {
+      .then(({ body: { topics } }) => {
         expect(topics.length).toBe(3)
 
         topics.forEach((topic) => {
@@ -58,7 +58,7 @@ describe("/api/articles/:article_id", () => {
     return request(app)
       .get('/api/articles/1')
       .expect(200)
-      .then(({ body: {article} }) => {
+      .then(({ body: { article } }) => {
 
         const expectedArticle = {
           article_id: 1,
@@ -98,8 +98,8 @@ describe("/api/articles", () => {
     return request(app)
       .get('/api/articles')
       .expect(200)
-      .then(({ body : {articles} }) => {
-        expect(articles.length).toBe(5)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(13)
 
 
         articles.forEach((article) => {
@@ -122,7 +122,7 @@ describe("/api/articles", () => {
     return request(app)
       .get('/api/articles?sort_by=title&order=asc')
       .expect(200)
-      .then(({ body : {articles} }) => {
+      .then(({ body: { articles } }) => {
         expect(articles).toBeSortedBy('title', { ascending: true, })
       })
   })
@@ -131,7 +131,7 @@ describe("/api/articles", () => {
     return request(app)
       .get('/api/articles?sort_by=banana')
       .expect(400)
-      .then(({ body : {msg} }) => {
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("column does not exist")
       })
   })
@@ -140,7 +140,7 @@ describe("/api/articles", () => {
     return request(app)
       .get('/api/articles?order=banana')
       .expect(400)
-      .then(({ body : {msg} }) => {
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("Incorrect data was entered")
       })
   })
@@ -149,8 +149,8 @@ describe("/api/articles", () => {
     return request(app)
       .get('/api/articles?sort_by=title&order=asc&topic=mitch')
       .expect(200)
-      .then(({ body : {articles} }) => {
-        expect(articles.length).toBe(4)
+      .then(({ body: { articles } }) => {
+        expect(articles.length).toBe(12)
 
         articles.forEach((article) => {
           expect(typeof article.author).toBe("string")
@@ -169,7 +169,7 @@ describe("/api/articles", () => {
     return request(app)
       .get('/api/articles?sort_by=title&order=asc&topic=banana')
       .expect(200)
-      .then(({ body : {articles} }) => {
+      .then(({ body: { articles } }) => {
         expect(articles.length).toBe(0)
 
       })
@@ -181,7 +181,7 @@ describe("/api/articles/:article_id/comments", () => {
     return request(app)
       .get('/api/articles/3/comments')
       .expect(200)
-      .then(({ body : {comments} }) => {
+      .then(({ body: { comments } }) => {
         expect(comments.length).toBe(2)
 
         comments.forEach((comment) => {
@@ -225,7 +225,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
         body: "test body"
       })
       .expect(201)
-      .then(({ body : {comment} }) => {
+      .then(({ body: { comment } }) => {
         expect(comment.comment_id).toBe(19)
         expect(comment.article_id).toBe(1)
         expect(comment.body).toBe("test body")
@@ -244,7 +244,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
         votes: 123
       })
       .expect(201)
-      .then(({ body: {comment} }) => {
+      .then(({ body: { comment } }) => {
         expect(comment.comment_id).toBe(19)
         expect(comment.article_id).toBe(1)
         expect(comment.body).toBe("test body")
@@ -277,7 +277,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
       })
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe(`insert or update on table violates foreign key constraint`)
+        expect(msg).toBe(`bad request, missing value in request`)
 
       })
   })
@@ -320,7 +320,7 @@ describe("PATCH: /api/articles/:article_id", () => {
         inc_votes: 22
       })
       .expect(200)
-      .then(({ body: {article} }) => {
+      .then(({ body: { article } }) => {
         expect(article.votes).toBe(122)
       })
   })
@@ -332,7 +332,7 @@ describe("PATCH: /api/articles/:article_id", () => {
         inc_votes: -18
       })
       .expect(200)
-      .then(({ body: {article} }) => {
+      .then(({ body: { article } }) => {
         expect(article.votes).toBe(82)
       })
   })
@@ -415,7 +415,7 @@ describe("GET: /api/users", () => {
     return request(app)
       .get('/api/users')
       .expect(200)
-      .then(({ body: {users} }) => {
+      .then(({ body: { users } }) => {
         expect(users.length).toBe(4)
 
         users.forEach((user) => {
@@ -432,7 +432,7 @@ describe("GET: /api/users/:username", () => {
     return request(app)
       .get('/api/users/lurker')
       .expect(200)
-      .then(({ body : {user}}) => {
+      .then(({ body: { user } }) => {
         const expectedUser = {
           username: 'lurker',
           name: 'do_nothing',
@@ -460,7 +460,7 @@ describe("PATCH: /api/comments/:comment_id", () => {
         inc_votes: 15
       })
       .expect(200)
-      .then(({ body: {comment} }) => {
+      .then(({ body: { comment } }) => {
         expect(comment.votes).toBe(31)
       })
   })
@@ -472,7 +472,7 @@ describe("PATCH: /api/comments/:comment_id", () => {
         inc_votes: -18
       })
       .expect(200)
-      .then(({ body: {comment} }) => {
+      .then(({ body: { comment } }) => {
         expect(comment.votes).toBe(-2)
       })
   })
@@ -512,6 +512,70 @@ describe("PATCH: /api/comments/:comment_id", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("bad request, incorrect datatype was used")
+
+      })
+  })
+})
+
+describe("POST: /api/articles", () => {
+  test("201: save one article", () => {
+    return request(app)
+      .post('/api/articles')
+      .send({
+        author: "butter_bridge",
+        title: "Test title",
+        topic: "mitch",
+        body: "Test body",
+      })
+      .expect(201)
+      .then(({ body: { article } }) => {
+        expect(article.article_id).toBe(14)
+        expect(article.title).toBe("Test title")
+        expect(article.topic).toBe("mitch")
+        expect(article.author).toBe("butter_bridge")
+        expect(article.body).toBe("Test body")
+        expect(typeof article.created_at).toBe("string")
+        expect(article.votes).toBe(0)
+        expect(article.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700")
+        expect(article.comment_count).toBe("0")
+      })
+  })
+
+  test("201: save article with unnecessary properties", () => {
+    return request(app)
+      .post('/api/articles')
+      .send({
+        author: "butter_bridge",
+        title: "Test title",
+        topic: "mitch",
+        body: "Test body",
+        fruit: "banana"
+      })
+      .expect(201)
+      .then(({ body: { article } }) => {
+        expect(article.article_id).toBe(14)
+        expect(article.title).toBe("Test title")
+        expect(article.topic).toBe("mitch")
+        expect(article.author).toBe("butter_bridge")
+        expect(article.body).toBe("Test body")
+        expect(typeof article.created_at).toBe("string")
+        expect(article.votes).toBe(0)
+        expect(article.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700")
+        expect(article.comment_count).toBe("0")
+      })
+  })
+
+  test("400: error message is returned when missing fields", () => {
+    return request(app)
+      .post('/api/articles')
+      .send({
+        title: "Test title",
+        topic: "mitch",
+        body: "Test body",
+      })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe(`bad request, missing value in request`)
 
       })
   })

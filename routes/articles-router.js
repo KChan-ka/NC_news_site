@@ -4,6 +4,7 @@ const controller = require("../controller/controller")
 
 articlesRouter.route("/")
     .get(controller.fetchArticles)
+    .post(controller.postArticle)
 
 
 articlesRouter.route("/:article_id")
