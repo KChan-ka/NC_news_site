@@ -88,9 +88,8 @@ exports.selectArticles = (sort_by = "created_at", order = "desc", topic, limit =
 
     //pagination
     //offsetValue is calculated with limit
-    const offsetValue = limit * (page - 1)
-
     if (page !== 1) {
+        const offsetValue = limit * (page - 1)
         queryString += `OFFSET ${offsetValue}`    }
 
 
@@ -101,9 +100,11 @@ exports.selectArticles = (sort_by = "created_at", order = "desc", topic, limit =
         });
 };
 
-exports.selectCommentsByArticleId = (articleId) => {
+exports.selectCommentsByArticleId = (articleId, limit = 10, page = 1) => {
 
-    const queryString = `
+
+
+    let queryString = `
     SELECT
     comment_id,
         votes,
@@ -113,7 +114,13 @@ exports.selectCommentsByArticleId = (articleId) => {
         article_id
     FROM comments
     WHERE article_id = $1
-    ORDER BY created_at DESC`
+    ORDER BY created_at DESC
+    LIMIT ${limit} `
+
+    if (page !== 1) {
+        const offsetValue = limit * (page - 1)
+        queryString += `OFFSET ${offsetValue}`  
+    }
 
     return db
         .query(queryString, [articleId])
