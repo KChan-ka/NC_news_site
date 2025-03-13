@@ -10,6 +10,7 @@ articlesRouter.route("/")
 articlesRouter.route("/:article_id")
     .get(controller.fetchArticleById)
     .patch(controller.patchArticleByArticleId)
+    .delete(controller.removeArticle)
 
 
 articlesRouter.route("/:article_id/comments")

@@ -374,7 +374,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
       })
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe(`foreign key value does not correspond to any entity id`)
+        expect(msg).toBe(`foreign key violation, incorrect data entered`)
 
       })
   })
@@ -402,7 +402,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
       })
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe(`foreign key value does not correspond to any entity id`)
+        expect(msg).toBe(`foreign key violation, incorrect data entered`)
 
       })
   })
@@ -735,6 +735,48 @@ describe("POST: /api/topics", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe(`bad request, missing value in request`)
+
+      })
+  })
+})
+
+describe("DELETE: /api/articles/:article_id", () => {
+  test("204: delete one article successfully", () => {
+    return request(app)
+      .delete('/api/articles/11')
+      .expect(204)
+      .then(() => {
+        return db.query(`SELECT article_id FROM articles WHERE article_id = 11`).then((rows) => {
+          expect(rows.length).toBe(undefined)
+        })
+      })
+  })
+
+  test("400: attempt to delete article with comments", () => {
+    return request(app)
+      .delete('/api/articles/1')
+      .expect(400)
+      .then(({body: {msg}}) => {
+        expect(msg).toBe("foreign key violation, incorrect data entered")
+      })
+  })
+
+  test("404: error message is returned when article does not exist", () => {
+    return request(app)
+      .delete('/api/articles/999')
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe(`no article found`)
+
+      })
+  })
+
+  test("400: bad formed article_id", () => {
+    return request(app)
+      .delete('/api/articles/banana')
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request, incorrect datatype was used")
 
       })
   })

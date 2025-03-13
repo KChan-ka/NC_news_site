@@ -11,6 +11,7 @@ const {
     updateCommentByCommentId,
     insertArticle,
     insertTopic,
+    deleteArticle,
 } = require('../model/model')
 
 const endpointsJson = require("../endpoints.json");
@@ -165,6 +166,18 @@ exports.postTopic = (req, res, next) => {
     insertTopic(slug, description)
         .then((data) => {
             res.status(201).send({ topic: data })
+        })
+        .catch((err) => {
+            next(err);
+        })
+}
+
+//delete a article
+exports.removeArticle = (req, res, next) => {
+    const { article_id } = req.params
+    deleteArticle(article_id)
+        .then((data) => {
+            res.status(204).send({ topic: data })
         })
         .catch((err) => {
             next(err);
