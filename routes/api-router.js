@@ -1,6 +1,6 @@
 const apiRouter = require("express").Router();
 
-const controller = require("../controller/controller")
+const controller = require("../controller/controller-api")
 
 const topicsRouter = require("./topics-router")
 const usersRouter = require("./users-router")

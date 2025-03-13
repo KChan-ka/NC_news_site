@@ -1,21 +1,22 @@
 const articlesRouter = require("express").Router();
 
-const controller = require("../controller/controller")
+const articleController = require("../controller/controller-articles")
+const commentController = require("../controller/controller-comments")
 
 articlesRouter.route("/")
-    .get(controller.fetchArticles)
-    .post(controller.postArticle)
+    .get(articleController.fetchArticles)
+    .post(articleController.postArticle)
 
 
 articlesRouter.route("/:article_id")
-    .get(controller.fetchArticleById)
-    .patch(controller.patchArticleByArticleId)
-    .delete(controller.removeArticle)
+    .get(articleController.fetchArticleById)
+    .patch(articleController.patchArticleByArticleId)
+    .delete(articleController.removeArticle)
 
 
 articlesRouter.route("/:article_id/comments")
-    .get(controller.fetchCommentsByArticleId)
-    .post(controller.postCommentByArticleId)
+    .get(commentController.fetchCommentsByArticleId)
+    .post(commentController.postCommentByArticleId)
 
 
 module.exports = articlesRouter

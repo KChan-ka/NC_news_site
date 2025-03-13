@@ -39,7 +39,7 @@ app.use(handleBadRequestErrors)
 
 //handle all the bad end points
 app.all("*", (req, res) => {
-    res.status(404).send({msg: "endpoint doesn't exist"})
+    res.status(404).send({ msg: "endpoint doesn't exist" })
 })
 
 //handle remaining errors
