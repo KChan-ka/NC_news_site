@@ -1,6 +1,6 @@
 const topicsRouter = require("express").Router();
 
-const controller = require("../controller/controller")
+const controller = require("../controller/controller-topics")
 
 topicsRouter.route("/")
     .get(controller.fetchTopics)
