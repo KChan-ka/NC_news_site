@@ -19,7 +19,7 @@ exports.handleBadRequestErrors = (err, req, res, next) => {
 
 exports.handleForeignKeyViolationsErrors = (err, req, res, next) => {
     if (err.code === "23503") {
-        res.status(400).send({ msg: "foreign key value does not correspond to any entity id"})
+        res.status(400).send({ msg: "foreign key violation, incorrect data entered"})
     } else {
         next(err);
     }

@@ -90,7 +90,8 @@ exports.selectArticles = (sort_by = "created_at", order = "desc", topic, limit =
     //offsetValue is calculated with limit
     if (page !== 1) {
         const offsetValue = limit * (page - 1)
-        queryString += `OFFSET ${offsetValue}`    }
+        queryString += `OFFSET ${offsetValue}`
+    }
 
 
     return db
@@ -119,7 +120,7 @@ exports.selectCommentsByArticleId = (articleId, limit = 10, page = 1) => {
 
     if (page !== 1) {
         const offsetValue = limit * (page - 1)
-        queryString += `OFFSET ${offsetValue}`  
+        queryString += `OFFSET ${offsetValue}`
     }
 
     return db
@@ -183,7 +184,7 @@ exports.deleteCommentByCommentId = (commentId) => {
 
     return db
         .query(queryString, [commentId])
-        .then(({rows}) => {
+        .then(({ rows }) => {
             if (rows.length === 0) {
                 return Promise.reject({ status: 404, msg: "comment id not found" });
             }
@@ -211,7 +212,7 @@ exports.selectUserByUsername = (username) => {
     WHERE username = $1`
 
     return db
-        .query(queryString,[username])
+        .query(queryString, [username])
         .then(({ rows }) => {
             if (rows.length === 0) {
                 return Promise.reject({ status: 404, msg: "no data found" });
@@ -253,8 +254,8 @@ exports.insertArticle = async (author, title, body, topic, articleImgUrl = "http
         ($1, $2, $3, $4, $5)
     RETURNING * `
 
-    const newArticle =  await db.query(queryString, [author, title, body, topic, articleImgUrl])
-        .then( ({ rows }) => {
+    const newArticle = await db.query(queryString, [author, title, body, topic, articleImgUrl])
+        .then(({ rows }) => {
             return rows[0]
         })
 
@@ -272,7 +273,27 @@ exports.insertTopic = (slug, description) => {
     RETURNING * `
 
     return db.query(queryString, [slug, description])
-        .then( ({ rows }) => {
+        .then(({ rows }) => {
+            return rows[0]
+        })
+};
+
+
+exports.deleteArticle = async (articleId) => {
+
+    //check if article id exist
+    const articleIdExists = await checkIfArticleIdExist(articleId)
+    if (!articleIdExists) {
+        return Promise.reject({ status: 404, msg: "no article found" });
+    }
+
+    const queryString = `
+    DELETE FROM articles
+    WHERE article_id = $1
+    RETURNING *`
+
+    return db.query(queryString, [articleId])
+        .then(({ rows }) => {
             return rows[0]
         })
 };
