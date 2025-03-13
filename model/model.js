@@ -260,3 +260,19 @@ exports.insertArticle = async (author, title, body, topic, articleImgUrl = "http
 
     return await this.selectArticleById(newArticle.article_id, true)
 };
+
+
+exports.insertTopic = (slug, description) => {
+
+    const queryString = `
+    INSERT INTO topics
+        (slug, description)
+    VALUES
+        ($1, $2)
+    RETURNING * `
+
+    return db.query(queryString, [slug, description])
+        .then( ({ rows }) => {
+            return rows[0]
+        })
+};
