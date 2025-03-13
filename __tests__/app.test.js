@@ -691,3 +691,51 @@ describe("POST: /api/articles", () => {
       })
   })
 })
+
+describe("POST: /api/topics", () => {
+  test("201: save one topic", () => {
+    return request(app)
+      .post('/api/topics')
+      .send({
+        slug: "dogs",
+        description: "not cats"
+      })
+      .expect(201)
+      .then(({ body: { topic } }) => {
+        expect(topic.slug_id).toBe(4)
+        expect(topic.slug).toBe("dogs")
+        expect(topic.description).toBe("not cats")
+        expect(topic.img_url).toBe(null)
+      })
+  })
+
+  test("201: save article with unnecessary properties", () => {
+    return request(app)
+      .post('/api/topics')
+      .send({
+        slug: "dogs",
+        description: "not cats",
+        topic: "mitch"
+      })
+      .expect(201)
+      .then(({ body: { topic } }) => {
+        expect(topic.slug_id).toBe(4)
+        expect(topic.slug).toBe("dogs")
+        expect(topic.description).toBe("not cats")
+        expect(topic.img_url).toBe(null)
+      })
+  })
+
+  test("400: error message is returned when missing fields", () => {
+    return request(app)
+      .post('/api/topics')
+      .send({
+        description: "not cats"
+      })
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe(`bad request, missing value in request`)
+
+      })
+  })
+})

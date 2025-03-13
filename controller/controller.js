@@ -10,6 +10,7 @@ const {
     selectUserByUsername,
     updateCommentByCommentId,
     insertArticle,
+    insertTopic,
 } = require('../model/model')
 
 const endpointsJson = require("../endpoints.json");
@@ -152,6 +153,18 @@ exports.postArticle = (req, res, next) => {
     insertArticle(author, title, body, topic, article_img_url)
         .then((data) => {
             res.status(201).send({ article: data })
+        })
+        .catch((err) => {
+            next(err);
+        })
+}
+
+//post a new topics
+exports.postTopic = (req, res, next) => {
+    const { slug, description } = req.body
+    insertTopic(slug, description)
+        .then((data) => {
+            res.status(201).send({ topic: data })
         })
         .catch((err) => {
             next(err);
