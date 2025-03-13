@@ -266,6 +266,65 @@ describe("/api/articles/:article_id/comments", () => {
         expect(msg).toBe("bad request, incorrect datatype was used")
       })
   })
+
+  test("200: pagination test limit", () => {
+    return request(app)
+      .get('/api/articles/3/comments?limit=1')
+      .expect(200)
+      .then(({ body: { comments, totalCount } }) => {
+        expect(totalCount).toBe(1)
+
+        expect(typeof comments[0].comment_id).toBe("number")
+        expect(typeof comments[0].votes).toBe("number")
+        expect(typeof comments[0].created_at).toBe("string")
+        expect(typeof comments[0].author).toBe("string")
+        expect(typeof comments[0].body).toBe("string")
+        expect(comments[0].article_id).toBe(3)
+      })
+  })
+
+  test("200: pagination test page", () => {
+    return request(app)
+      .get('/api/articles/3/comments?limit=1&p=2')
+      .expect(200)
+      .then(({ body: { comments, totalCount } }) => {
+        expect(totalCount).toBe(1)
+
+        expect(typeof comments[0].comment_id).toBe("number")
+        expect(typeof comments[0].votes).toBe("number")
+        expect(typeof comments[0].created_at).toBe("string")
+        expect(typeof comments[0].author).toBe("string")
+        expect(typeof comments[0].body).toBe("string")
+        expect(comments[0].article_id).toBe(3)
+      })
+  })
+
+  test("400: pagination test invalid limit", () => {
+    return request(app)
+      .get('/api/articles/3/comments?limit=banana&p=2')
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("incorrect parameter entered")
+      })
+  })
+
+  test("400: pagination test invalid page", () => {
+    return request(app)
+      .get('/api/articles/3/comments?limit=1&p=banana')
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("incorrect parameter entered")
+      })
+  })
+
+  test("404: pagination test no results being returned", () => {
+    return request(app)
+      .get('/api/articles/3/comments?limit=11&p=5')
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("no data found")
+      })
+  })
 })
 
 describe("POST: /api/articles/:article_id/comments", () => {

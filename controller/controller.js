@@ -13,6 +13,7 @@ const {
 } = require('../model/model')
 
 const endpointsJson = require("../endpoints.json");
+const { totalCount } = require('../db/connection');
 
 //fetch all APIs
 exports.fetchAllAPi = (req, res, next) => {
@@ -58,9 +59,10 @@ exports.fetchArticles = (req, res, next) => {
 //fetch comments from article id
 exports.fetchCommentsByArticleId = (req, res, next) => {
     const {article_id} = req.params
-    selectCommentsByArticleId(article_id)
+    const {limit, p} = req.query
+    selectCommentsByArticleId(article_id, limit, p)
         .then((data) => {
-            res.status(200).send({ comments : data })
+            res.status(200).send({ comments : data, totalCount: data.length })
         })
         .catch((err) => {
             next(err);
