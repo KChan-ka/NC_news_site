@@ -5,6 +5,7 @@
 const express = require("express");
 const app = express();
 const apiRouter = require("./routes/api-router")
+const cors = require("cors")
 
 const {
     handleEmptyDataErrors,
@@ -18,6 +19,7 @@ const {
 //-*************************************************************
 
 app.use(express.json());
+app.use(cors())
 
 // API methods
 app.use("/api", apiRouter);
